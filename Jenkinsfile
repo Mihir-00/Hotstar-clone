@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        sonarQubeScanner 'Default'
+    }
 
     environment {
         DOCKER_IMAGE = 'mihir021/Hotstar-clone'
@@ -17,10 +20,7 @@ pipeline {
         }
 
         stage('SonarQube - Static Code Analysis') {
-            tools {
-                sonarQubeScanner 'Default'
-            }
-
+            
             steps {
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv('MySonarCloud') {
