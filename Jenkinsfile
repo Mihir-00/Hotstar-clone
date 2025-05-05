@@ -37,7 +37,6 @@ pipeline {
         }
 
         stage('Docker Build') {
-                sh 'docker version'
             steps {
                 sh 'docker version'
                 script {
