@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        SonarScanner 'Default'
+        sonarQubeScanner 'Default'
     }
 
     environment {
@@ -27,8 +27,8 @@ pipeline {
                     withSonarQubeEnv('MySonarCloud') {
                         sh '''
                             sonar-scanner \
-                              -Dsonar.projectKey=your-project-key \
-                              -Dsonar.organization=your-org \
+                              -Dsonar.projectKey=mihir-devops_hotstarclone \
+                              -Dsonar.organization=mihir-devops \
                               -Dsonar.sources=. \
                               -Dsonar.host.url=https://sonarcloud.io \
                               -Dsonar.login=$SONAR_TOKEN \
