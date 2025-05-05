@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     environment {
         DOCKER_IMAGE = 'mihir021/Hotstar-clone'
         DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
@@ -18,10 +18,10 @@ pipeline {
         }
 
         stage('SonarQube - Static Code Analysis') {
-            
             steps {
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
+                        sh 'which sonar-scanner'
                         sh '''
                             sonar-scanner \
                               -Dsonar.projectKey=mihir-devops_hotstarclone \
