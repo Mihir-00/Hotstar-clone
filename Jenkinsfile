@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'mihir021/Hotstar-clone'
         DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
-        SONARQUBE_ENV = 'MySonarQube' // Name configured in Jenkins global SonarQube servers
+        SONARQUBE_ENV = 'MySonarCloud' // Name configured in Jenkins global SonarQube servers
         SONAR_TOKEN = credentials('sonarcloud-token')
         AWS_REGION = 'eu-north-1'
         CLUSTER_NAME = 'your-eks-cluster-name'
