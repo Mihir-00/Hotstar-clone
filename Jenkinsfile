@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'mihir021/Hotstar-clone'
+        DOCKER_IMAGE = 'mihir021/hotstar-clone'
         DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
         SONARQUBE_ENV = 'MySonarCloud' // Name configured in Jenkins global SonarQube servers
         SONAR_TOKEN = credentials('sonarcloud-token')
