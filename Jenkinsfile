@@ -27,7 +27,6 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
-                        sh 'which sonar-scanner'
                         sh '''
                             sonar-scanner \
                               -Dsonar.projectKey=mihir-devops_hotstarclone \
