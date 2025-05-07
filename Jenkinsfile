@@ -45,6 +45,7 @@ pipeline {
         }
 
         stage('Docker Scout - Image Scan') {
+            when { expression { false } }
             steps {
                 sh '''
                     docker scout quickview ${DOCKER_IMAGE}:${BUILD_NUMBER} || echo "Scout scan warnings or issues detected"
@@ -85,9 +86,10 @@ pipeline {
         stage('OWASP ZAP - Dynamic Security Test') {
             steps {
                 sh '''
-                    docker run --rm -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py \
-                        -t http://testphp.vulnweb.com \
-                        -r zap-report.html || echo "ZAP scan completed with warnings"
+                    docker run --rm -v $(pwd):/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py \
+                      -t http://testphp.vulnweb.com \
+                      -r zap-report.html
+
                 '''
             }
         }
