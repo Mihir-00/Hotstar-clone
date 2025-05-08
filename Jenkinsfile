@@ -87,7 +87,7 @@ pipeline {
                 sh '''
                    docker run --rm \
                       -v $PWD/zap-reports:/zap/wrk/:rw \
-                      owasp/zap2docker-stable \
+                      owasp/zap-stable \
                       zap-baseline.py -t http://testphp.vulnweb.com -r zap-report.html
                 '''
             }
