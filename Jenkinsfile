@@ -97,9 +97,16 @@ pipeline {
         }
 
         stage('Archive Reports') {
+            when { expression { false } }
             steps {
                 archiveArtifacts artifacts: '/zap/wrk/report.html', allowEmptyArchive: true
             }
         }
     }
+    post {
+        always {
+            archiveArtifacts artifacts: 'report.html', allowEmptyArchive: false
+        }
+    }
+
 }
