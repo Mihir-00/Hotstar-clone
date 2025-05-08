@@ -88,19 +88,10 @@ pipeline {
         stage('OWASP ZAP - Dynamic Security Test') {
             steps {
                 script {
-                    // Create reports directory with proper permissions
                     sh 'mkdir -p ${WORKSPACE}/zap-reports && chmod 777 ${WORKSPACE}/zap-reports'
-            
-                    // Run ZAP scan with corrected volume mount
-                    docker.run(
-                        "--rm -v ${WORKSPACE}/zap-reports:/zap/wrk/:rw " +
-                        "-u zap " +  // Run as 'zap' user inside container
-                        "zaproxy/zap-stable " +
-                        "zap-baseline.py -t http://testphp.vulnweb.com -r zap-report.html"
-                    )
-            
-                    // Archive the results
-                    archiveArtifacts artifacts: 'zap-reports/zap-report.html', fingerprint: true
+                    docker.image('zaproxy/zap-stable').inside("-v ${WORKSPACE}/zap-reports:/zap/wrk/:rw -u zap") {
+                        sh 'zap-baseline.py -t http://testphp.vulnweb.com -r /zap/wrk/zap-report.html'
+                    }
                 }
             }
         }
