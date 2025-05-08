@@ -86,24 +86,11 @@ pipeline {
         }
 
         stage('OWASP ZAP - Dynamic Security Test') {
-            steps {
-                script {            
-                    // 1. Prepare workspace (safe permissions)
-                    sh '''
-                        mkdir -p "$WORKSPACE/zap-reports"
-                        chmod 755 "$WORKSPACE/zap-reports"
-                    '''
-
-                    // 2. Run ZAP using official Jenkins plugin syntax
-                    owaspZap scanType: 'baseline', 
-                         target: 'http://testphp.vulnweb.com',
-                         reportFile: 'zap-report.html',
-                         reportDir: "$WORKSPACE/zap-reports",
-                         containerOptions: '-u zap:zap'
-
-                    // 3. Post-scan actions
-                    archiveArtifacts artifacts: 'zap-reports/**/*', fingerprint: true
-                }
+            steps {            
+                sh '''
+                    docker pull zaproxy/zap-stable
+                    docker run -v $PWD:/zap/wrk/:rw -t zaproxy/zap-stable zap.sh -cmd -autorun /zap/wrk/zap.yaml
+                '''
             }
         }
 
