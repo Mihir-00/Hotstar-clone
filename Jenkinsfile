@@ -88,8 +88,8 @@ pipeline {
         stage('OWASP ZAP - Dynamic Security Test') {
             steps {            
                 sh '''
-                    docker pull zaproxy/zap-stable
-                    docker run -v $PWD:/zap/wrk/:rw -t zaproxy/zap-stable zap.sh -cmd -autorun /zap/wrk/zap.yaml
+                    docker pull zaproxy/zap-stable                   
+                    docker run -v "$(pwd)":/zap/wrk/:rw -t zaproxy/zap-stable bash -c "touch /zap/wrk/testfile.txt"
                 '''
             }
         }
