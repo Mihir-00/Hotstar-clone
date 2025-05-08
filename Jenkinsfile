@@ -112,9 +112,4 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            archiveArtifacts artifacts: 'zap-reports/zap-report.html', onlyIfSuccessful: false
-        }
-    }
 }
