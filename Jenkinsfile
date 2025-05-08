@@ -88,18 +88,25 @@ pipeline {
         stage('OWASP ZAP - Dynamic Security Test') {
             steps {
                 sh '''
-                   docker run --rm \
-                      -v $PWD/zap-reports:/zap/wrk/:rw \
-                      zaproxy/zap-stable \
-                      zap-baseline.py -t http://testphp.vulnweb.com -r zap-report.html
+                   mkdir -p zap-reports
+                    docker run --rm \
+                        -v $PWD/zap-reports:/zap/wrk/:rw \
+                        zaproxy/zap-stable \
+                        zap-baseline.py -t http://testphp.vulnweb.com -r zap-report.html
                 '''
             }
         }
 
         stage('Archive Reports') {
+            when { expression { false } }
             steps {
                 archiveArtifacts artifacts: 'zap-report.html', allowEmptyArchive: true
             }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: 'zap-reports/zap-report.html', onlyIfSuccessful: false
         }
     }
 }
