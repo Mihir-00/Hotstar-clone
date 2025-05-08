@@ -90,15 +90,14 @@ pipeline {
                 sh '''
                     docker pull zaproxy/zap-stable
                     docker run --user root \
-                    -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r report.html
+                    -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r report.html -m 1
                 '''
             }
         }
 
         stage('Archive Reports') {
-            when { expression { false } }
             steps {
-                archiveArtifacts artifacts: 'zap-report.html', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'report.html', allowEmptyArchive: true
             }
         }
     }
