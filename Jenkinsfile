@@ -87,15 +87,13 @@ pipeline {
 
         stage('OWASP ZAP - Dynamic Security Test') {
             steps {
-                script {
-                    def workspace = env.WORKSPACE
-            
+                script {            
                     sh """
-                        mkdir -p ${workspace}/zap-reports
-                        chmod 777 ${workspace}/zap-reports
+                        mkdir -p "${WORKSPACE}/zap-reports"
+                        chmod 777 "${WORKSPACE}/zap-reports"
                         docker run --rm \\
-                        -v ${workspace}/zap-reports:/zap/wrk:rw \\
-                        -u $(id -u):$(id -g) \\
+                        -v "${WORKSPACE}/zap-reports":/zap/wrk:rw \\
+                        -u \$(id -u):\$(id -g) \\
                         zaproxy/zap-stable \\
                         zap-baseline.py -t http://testphp.vulnweb.com -r /zap/wrk/zap-report.html
                     """
