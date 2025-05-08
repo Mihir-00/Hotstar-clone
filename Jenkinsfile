@@ -88,25 +88,17 @@ pipeline {
         stage('OWASP ZAP - Dynamic Security Test') {
             steps {
                 script {
-                    // Create reports directory with correct permissions
-                    sh 'mkdir -p ${WORKSPACE}/zap-reports && chmod 777 ${WORKSPACE}/zap-reports'
+                    def workspace = env.WORKSPACE
             
-                    // Clean any previous reports
-                    sh 'rm -f ${WORKSPACE}/zap-reports/* || true'
-            
-                    // Run ZAP with proper volume mounting and user context
                     sh """
-                        docker run --rm \
-                        -v ${WORKSPACE}/zap-reports:/zap/wrk:rw \
-                        -u $(id -u):$(id -g) \
-                        -e ZAP_USER=$(id -u) \
-                        -e ZAP_GROUP=$(id -g) \
-                        zaproxy/zap-stable \
+                        mkdir -p ${workspace}/zap-reports
+                        chmod 777 ${workspace}/zap-reports
+                        docker run --rm \\
+                        -v ${workspace}/zap-reports:/zap/wrk:rw \\
+                        -u $(id -u):$(id -g) \\
+                        zaproxy/zap-stable \\
                         zap-baseline.py -t http://testphp.vulnweb.com -r /zap/wrk/zap-report.html
                     """
-            
-                    // Archive results
-                    archiveArtifacts artifacts: 'zap-reports/zap-report.html', fingerprint: true
                 }
             }
         }
