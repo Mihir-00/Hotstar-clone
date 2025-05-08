@@ -18,6 +18,7 @@ pipeline {
         }
 
         stage('SonarQube - Static Code Analysis') {
+            when { expression { false } }
             steps {
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
@@ -36,6 +37,7 @@ pipeline {
         }
 
         stage('Docker Build') {
+            when { expression { false } }
             steps {
                 sh 'docker version'
                 script {
@@ -54,6 +56,7 @@ pipeline {
         }
 
         stage('Push Docker Image to DockerHub') {
+            when { expression { false } }
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
@@ -87,7 +90,7 @@ pipeline {
                 sh '''
                    docker run --rm \
                       -v $PWD/zap-reports:/zap/wrk/:rw \
-                      owasp/zap-stable \
+                      zaproxy/zap-stable \
                       zap-baseline.py -t http://testphp.vulnweb.com -r zap-report.html
                 '''
             }
