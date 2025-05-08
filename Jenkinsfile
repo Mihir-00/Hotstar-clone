@@ -85,9 +85,10 @@ pipeline {
         stage('OWASP ZAP - Dynamic Security Test') {
             steps {
                 sh '''
-                    mkdir -p zap/wrk
-                    docker run --rm -v $(pwd)/zap/wrk:/zap/wrk -t zaproxy/zap-stable zap-baseline.py \
-                        -t http://testphp.vulnweb.com -r zap-report.html || echo "ZAP scan completed with warnings"
+                   docker run --rm \
+                      -v $PWD/zap-reports:/zap/wrk/:rw \
+                      owasp/zap2docker-stable \
+                      zap-baseline.py -t http://testphp.vulnweb.com -r zap-report.html
                 '''
             }
         }
