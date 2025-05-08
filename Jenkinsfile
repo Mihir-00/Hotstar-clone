@@ -90,7 +90,7 @@ pipeline {
                 sh '''
                     docker pull zaproxy/zap-stable
                     docker run --user root \
-                    -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r report_html -I -d
+                    -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r report -I -d
                     ls -lah ${WORKSPACE}
                 '''
             }
@@ -98,7 +98,7 @@ pipeline {
 
         stage('Archive Reports') {
             steps {
-                archiveArtifacts artifacts: 'report.html', allowEmptyArchive: true
+                archiveArtifacts artifacts: '/zap/wrk/report.html', allowEmptyArchive: true
             }
         }
     }
