@@ -90,7 +90,7 @@ pipeline {
                 sh '''
                     docker pull zaproxy/zap-stable
                     docker run --user root \
-                    -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r /zap/wrk/report.html -I
+                    -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r /zap/wrk/report.html -I -d
                     ls -lah ${WORKSPACE}
                 '''
             }
