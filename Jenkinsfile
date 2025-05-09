@@ -94,7 +94,9 @@ pipeline {
                     docker pull zaproxy/zap-stable
                     docker run --user root \
                     -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r report.html -I -d
-                    sudo cp /zap/wrk/report.html report.html
+                    docker logs -f "$CONTAINER_ID"
+                    docker cp "$CONTAINER_ID":/zap/wrk/report.html "${WORKSPACE}/report.html"
+                    docker rm "$CONTAINER_ID"
                     ls -lah ${WORKSPACE}
                 '''
             }
