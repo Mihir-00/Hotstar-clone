@@ -92,9 +92,9 @@ pipeline {
                     touch report.html
                     chmod a+w report.html
                     docker pull zaproxy/zap-stable
-                    docker run --user $(id -u):$(id -g) \
+                    docker run --user root \
                     -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r report.html -I -d
-                    cp /zap/wrk/report.html report.html
+                    sudo cp /zap/wrk/report.html report.html
                     ls -lah ${WORKSPACE}
                 '''
             }
