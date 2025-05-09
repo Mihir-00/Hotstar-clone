@@ -88,11 +88,9 @@ pipeline {
         stage('OWASP ZAP - Dynamic Security Test') {
             steps {            
                 sh '''
-                    mkdir -p "${WORKSPACE}/zap_report"      # create an output folder in the workspace
-                    chmod a+w "${WORKSPACE}/zap_report"    # allow writing by any user
                     docker pull zaproxy/zap-stable
                     docker run --user root \
-                    -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r zap_report/report.html -I -d
+                    -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r report.html -I -d
                     ls -lah ${WORKSPACE}
                 '''
             }
