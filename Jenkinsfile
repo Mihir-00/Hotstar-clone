@@ -18,7 +18,6 @@ pipeline {
         }
 
         stage('SonarQube - Static Code Analysis') {
-            when { expression { false } }
             steps {
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
@@ -37,7 +36,6 @@ pipeline {
         }
 
         stage('Docker Build') {
-            when { expression { false } }
             steps {
                 sh 'docker version'
                 script {
@@ -46,17 +44,7 @@ pipeline {
             }
         }
 
-        stage('Docker Scout - Image Scan') {
-            when { expression { false } }
-            steps {
-                sh '''
-                    docker scout quickview ${DOCKER_IMAGE}:${BUILD_NUMBER} || echo "Scout scan warnings or issues detected"
-                '''
-            }
-        }
-
         stage('Push Docker Image to DockerHub') {
-            when { expression { false } }
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
@@ -98,13 +86,6 @@ pipeline {
                     docker cp "$CONTAINER_ID":/zap/wrk/report.html ${WORKSPACE}/zap_report/report.html
                     docker rm "$CONTAINER_ID"
                 '''
-            }
-        }
-
-        stage('Archive Reports') {
-            when { expression { false } }
-            steps {
-                archiveArtifacts artifacts: '/zap/wrk/report.html', allowEmptyArchive: true
             }
         }
     }
