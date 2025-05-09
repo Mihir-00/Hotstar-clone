@@ -86,14 +86,20 @@ pipeline {
         }
 
         stage('OWASP ZAP - Dynamic Security Test') {
-            steps {            
+            steps {
+                sh '''
+                    echo "TEST" > ${WORKSPACE}/write_test.txt
+                    ls -l ${WORKSPACE}/write_test.txt
+                    rm ${WORKSPACE}/write_test.txt
+                '''
+            
                 sh '''
                     cd "$WORKSPACE"
                     touch report.html
                     chmod a+w report.html
                     docker pull zaproxy/zap-stable
                     docker run --user root \
-                    zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r report.html -I -d
+                    -v ${WORKSPACE}:/zap/wrk/:rw zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r report.html -I -d
                     cp /zap/wrk/report.html report.html
                     ls -lah ${WORKSPACE}
                 '''
