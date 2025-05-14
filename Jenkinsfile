@@ -60,6 +60,7 @@ pipeline {
                 withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
                   script {
                     CLUSTER_NAME = sh(script: 'terraform output -raw cluster_name', returnStdout: true).trim()
+                    echo "Using cluster: ${CLUSTER_NAME}"
                     sh "aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}"
                     }
                 }
