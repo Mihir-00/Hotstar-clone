@@ -60,7 +60,7 @@ pipeline {
             steps {
                 withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
                   script {
-                    CLUSTER_NAME = sh(script: 'terraform output -raw eks_cluster_name', returnStdout: true).trim()
+                    CLUSTER_NAME = sh(script: 'terraform output -raw cluster_name', returnStdout: true).trim()
                     env.CLUSTER_NAME = CLUSTER_NAME
                 }
                 sh '''
