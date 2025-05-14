@@ -59,7 +59,7 @@ pipeline {
 
         stage('Update kubeconfig for EKS') {
             steps {
-                withAWS(credentials: 'aws-credentials', region: "${REGION}") {
+                withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
                   script {
                     CLUSTER_NAME = sh(script: 'terraform output -raw eks_cluster_name', returnStdout: true).trim()
                     env.CLUSTER_NAME = CLUSTER_NAME
