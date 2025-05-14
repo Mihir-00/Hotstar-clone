@@ -7,7 +7,6 @@ pipeline {
         SONARQUBE_ENV = 'MySonarCloud' // Name configured in Jenkins global SonarQube servers
         SONAR_TOKEN = credentials('sonarcloud-token')
         AWS_REGION = 'eu-north-1'
-        CLUSTER_NAME = ''
         SERVICE_NAME = 'hotstar-service'
         NAMESPACE = 'default'
         APP_URL = ''
@@ -61,11 +60,8 @@ pipeline {
                 withAWS(credentials: 'aws-credentials', region: "${AWS_REGION}") {
                   script {
                     CLUSTER_NAME = sh(script: 'terraform output -raw cluster_name', returnStdout: true).trim()
-                    env.CLUSTER_NAME = CLUSTER_NAME
-                }
-                sh '''
-                    aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}
-                '''
+                    sh "aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}"
+                    }
                 }
             }
         }
