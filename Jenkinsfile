@@ -7,7 +7,10 @@ pipeline {
         SONARQUBE_ENV = 'MySonarCloud' // Name configured in Jenkins global SonarQube servers
         SONAR_TOKEN = credentials('sonarcloud-token')
         AWS_REGION = 'eu-north-1'
-        CLUSTER_NAME = 'your-eks-cluster-name'
+        CLUSTER_NAME = ''
+        SERVICE_NAME = 'hotstar-service'
+        NAMESPACE = 'default'
+        APP_URL = ''
     }
 
     stages {
@@ -22,6 +25,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'sonarcloud-token', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv("${SONARQUBE_ENV}") {
                         sh '''
+                            rm zap_report/report.html
                             sonar-scanner \
                               -Dsonar.projectKey=mihir-devops_hotstarclone \
                               -Dsonar.organization=mihir-devops \
@@ -56,9 +60,15 @@ pipeline {
         stage('Update kubeconfig for EKS') {
             when { expression { false } }
             steps {
+                withAWS(credentials: 'aws-credentials', region: "${REGION}") {
+                  script {
+                    CLUSTER_NAME = sh(script: 'terraform output -raw eks_cluster_name', returnStdout: true).trim()
+                    env.CLUSTER_NAME = CLUSTER_NAME
+                }
                 sh '''
-                    aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_REGION
+                    aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}
                 '''
+                }
             }
         }
 
@@ -67,8 +77,26 @@ pipeline {
             steps {
                 sh '''
                     kubectl apply -f k8s/deployment.yaml
-                    kubectl rollout status deployment your-deployment-name
                 '''
+            }
+        }
+        stage('Get LoadBalancer URL') {
+          steps {
+              script {
+                  sh '''
+                    echo "Waiting for LoadBalancer to be ready..."
+                    for i in {1..30}; do
+                        HOST=$(kubectl get svc ${SERVICE_NAME} -n ${NAMESPACE} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+                        if [ ! -z "$HOST" ]; then
+                            echo "APP_URL=http://$HOST" > app_url.txt
+                            break
+                        fi
+                        sleep 10
+                    done
+                '''
+                APP_URL = sh(script: "cat app_url.txt | cut -d '=' -f2", returnStdout: true).trim()
+                echo "Application URL is: ${APP_URL}"
+                }
             }
         }
 
@@ -78,7 +106,7 @@ pipeline {
                     docker pull zaproxy/zap-stable
                     CONTAINER_ID=$(docker run -d --user root \
                     -v ${WORKSPACE}:/zap/wrk:rw \
-                    zaproxy/zap-stable zap-baseline.py -t http://testphp.vulnweb.com -r report.html -I -d)
+                    zaproxy/zap-stable zap-baseline.py -t ${APP_URL} -r report.html -I -d)
                     # Wait for scan to complete
                     docker logs -f "$CONTAINER_ID"
                     mkdir -p ${WORKSPACE}/zap_report
