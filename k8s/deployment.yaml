@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hotstar-app
+  labels:
+    app: hotstar
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hotstar
+  template:
+    metadata:
+      labels:
+        app: hotstar
+    spec:
+      containers:
+        - name: hotstar-container
+          image: mihir021/hotstar-clone:51  # Change as needed
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hotstar-service
+spec:
+  type: LoadBalancer  # Use 'NodePort' if running on Minikube or locally
+  selector:
+    app: hotstar
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
