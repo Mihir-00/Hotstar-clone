@@ -58,7 +58,6 @@ pipeline {
         }
 
         stage('Update kubeconfig for EKS') {
-            when { expression { false } }
             steps {
                 withAWS(credentials: 'aws-credentials', region: "${REGION}") {
                   script {
@@ -73,7 +72,6 @@ pipeline {
         }
 
         stage('Deploy to EKS') {
-            when { expression { false } }
             steps {
                 sh '''
                     kubectl apply -f k8s/deployment.yaml
